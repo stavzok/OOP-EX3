@@ -36,6 +36,10 @@ public class Image {
         this.height = height;
     }
 
+    private void paddImage(){
+
+    }
+
     public int getWidth() {
         return width;
     }
