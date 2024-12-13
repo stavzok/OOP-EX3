@@ -4,8 +4,11 @@ import java.awt.*;
 
 public class PaddedImage{
     Image image;
+    Image oldImage;
+
     Color [] [] pixelArray;
     public PaddedImage(Image oldImage) {
+        this.oldImage = oldImage;
         int newWidth = closestPowerOfTwo(oldImage.getWidth());
         int newHeight = closestPowerOfTwo(oldImage.getHeight());
         if (newWidth == oldImage.getWidth() && newHeight == oldImage.getHeight()) {
@@ -18,16 +21,16 @@ public class PaddedImage{
     }
 
     private Color[][] extendPixleArray(Image oldImage, int newWidth, int newHeight) {
-        int diffWidth = (oldImage.getWidth() - newWidth)/2;
-        int diffHeight = (oldImage.getHeight() - newHeight)/2;
-        Color [][] newPixelArray = new Color[newWidth][newHeight];
-        for (int i = 0; i < newWidth; i++) {
-            for (int j = 0; j < newHeight; j++) {
-                if (i < diffWidth || i > (newWidth - diffWidth) - 1 || j <diffHeight || j > (newHeight - diffHeight) - 1 ) {
-                    newPixelArray[i][j] = new Color(0,0,0);
+        int diffWidth = (newWidth - oldImage.getWidth())/2;
+        int diffHeight = (newHeight - oldImage.getHeight())/2;
+        Color [][] newPixelArray = new Color[newHeight][newWidth];
+        for (int i = 0; i < newHeight; i++) {
+            for (int j = 0; j < newWidth; j++) {
+                if (i < diffHeight || i > (newHeight - diffHeight) - 1 || j <diffWidth || j > (newWidth - diffWidth) - 1 ) {
+                    newPixelArray[i][j] = new Color(255,255,255);
                 }
                 else {
-                    newPixelArray[i][j] = oldImage.getPixel(i - diffWidth,j - diffHeight);
+                    newPixelArray[i][j] = oldImage.getPixel(i - diffHeight,j - diffWidth);
                 }
             }
         }
@@ -44,5 +47,9 @@ public class PaddedImage{
 
     public Image getImage() {
         return image;
+    }
+
+    public Image getOldImage() {
+        return oldImage;
     }
 }

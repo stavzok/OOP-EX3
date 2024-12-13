@@ -8,7 +8,7 @@ public class main {
     public static void main(String[] args) {
         Image image = null;
         try {
-            image = new Image("C:/Users/stav/IdeaProjects/OOP-EX3/examples/cat.jpeg");
+            image = new Image("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat.jpeg");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -20,12 +20,9 @@ public class main {
 
         AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, asciiChars);
         char[][] asciiImage = algo.run();
-        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/stav/IdeaProjects/OOP-EX3/examples/catNew.jpeg",
+        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat1.html",
                 "Courier New");
         asciiOutput.out(asciiImage);
-
-
-
 
     }
 }
