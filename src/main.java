@@ -20,7 +20,7 @@ public class main {
 
         AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, asciiChars);
         char[][] asciiImage = algo.run();
-        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/stav/IdeaProjects/OOP-EX3/examples/catNew.jpeg",
+        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/stav/IdeaProjects/OOP-EX3/examples/catNew.html",
                 "Courier New");
         asciiOutput.out(asciiImage);
 
