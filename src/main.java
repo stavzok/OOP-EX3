@@ -7,7 +7,7 @@ public class main {
     public static void main(String[] args) {
         Image image = null;
         try {
-            image = new Image("/C://Users//User//Documents//OOP//OOP-EX3//src//board.jpeg/");
+            image = new Image("C:/Users/stav/IdeaProjects/OOP-EX3/examples/board.jpeg");
         } catch (Exception e) {
             e.printStackTrace();
         }

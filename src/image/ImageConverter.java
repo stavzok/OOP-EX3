@@ -35,18 +35,16 @@ public class ImageConverter {
     }
 
     private Color [][] processSubImage(int newWidth, int newHeight, int subImageIndex) {
-        Color [][] subImage = new Color[newWidth][newHeight];
+
+        Color [][] subImage = new Color[newHeight][newWidth];
         int subImageRow = subImageIndex / (oldWidth / newWidth);
         int subImageCol = subImageIndex % (oldWidth / newWidth);
         for (int i=0; i<newHeight; i++) {
             for (int j=0; j<newWidth; j++) {
-                System.out.print(j + subImageRow*newHeight);
-                System.out.println(i + subImageCol*newWidth);
-                subImage[i][j] =  paddedImage.getImage().getPixel(j + subImageRow*newHeight,
-                        i + subImageCol*newWidth);
+                subImage[i][j] =  paddedImage.getImage().getPixel(j + subImageCol*newWidth,
+                        i + subImageRow*newHeight);
             }
         }
-        System.out.println("sub image done");
         return subImage;
     }
 
@@ -62,11 +60,12 @@ public class ImageConverter {
     }
 
     private void createSubImages() {
-        int newWidth = oldWidth/resolution;
-        int newHeight = oldHeight/newWidth;
-        int numberOfSubImages = oldHeight*oldWidth/newWidth*newHeight;
+        int subImageWidth = oldWidth / resolution;     // width of each subimage
+        int subImageHeight = oldHeight / resolution;   // height of each subimage
+        int numberOfSubImages = resolution * (oldHeight / subImageHeight);
         for (int i = 0; i < numberOfSubImages; i++) {
-            Color [][] subImage = processSubImage(newWidth, newHeight, i);
+            Color [][] subImage = processSubImage(subImageWidth, subImageHeight, i);
+
             subImagesArray.add(subImage);
             subImages.put(subImage,calculateSubImageBrightness(subImage));
         }

@@ -8,8 +8,13 @@ public class PaddedImage{
     public PaddedImage(Image oldImage) {
         int newWidth = closestPowerOfTwo(oldImage.getWidth());
         int newHeight = closestPowerOfTwo(oldImage.getHeight());
-        this.pixelArray = extendPixleArray(oldImage, newWidth, newHeight);
-        image = new Image(pixelArray, newWidth, newHeight);
+        if (newWidth == oldImage.getWidth() && newHeight == oldImage.getHeight()) {
+            image = oldImage;
+        }
+        else {
+            this.pixelArray = extendPixleArray(oldImage, newWidth, newHeight);
+            image = new Image(pixelArray, newWidth, newHeight);
+        }
     }
 
     private Color[][] extendPixleArray(Image oldImage, int newWidth, int newHeight) {
