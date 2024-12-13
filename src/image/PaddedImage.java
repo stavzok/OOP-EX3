@@ -21,7 +21,7 @@ public class PaddedImage{
                 if (i < diffWidth || i > (newWidth - diffWidth) - 1 || j <diffHeight || j > (newHeight - diffHeight) - 1 ) {
                     newPixelArray[i][j] = new Color(0,0,0);
                 }
-                else{
+                else {
                     newPixelArray[i][j] = oldImage.getPixel(i - diffWidth,j - diffHeight);
                 }
             }

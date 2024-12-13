@@ -14,6 +14,7 @@ public class ImageConverter {
     private final double GREEN_FACTOR = 0.7152;
     private final double BLUE_FACTOR = 0.0722;
     private final int MAX_RGB_SCORE = 255;
+    private final ArrayList<Color[][]> subImagesArray = new ArrayList<>();
 
 
     public ImageConverter(PaddedImage paddedImage, int resolution) {
@@ -37,27 +38,27 @@ public class ImageConverter {
         Color [][] subImage = new Color[newWidth][newHeight];
         int subImageRow = subImageIndex / (oldWidth / newWidth);
         int subImageCol = subImageIndex % (oldWidth / newWidth);
-        for (int i=0; i<newWidth; i++) {
-            for (int j=0; j<newHeight; j++) {
-                subImage[i][j] =  paddedImage.getImage().getPixel(i + subImageRow*newWidth,j + subImageCol*newHeight);
+        for (int i=0; i<newHeight; i++) {
+            for (int j=0; j<newWidth; j++) {
+                System.out.print(j + subImageRow*newHeight);
+                System.out.println(i + subImageCol*newWidth);
+                subImage[i][j] =  paddedImage.getImage().getPixel(j + subImageRow*newHeight,
+                        i + subImageCol*newWidth);
             }
         }
-
-
+        System.out.println("sub image done");
         return subImage;
-
     }
 
     private Double calculateSubImageBrightness(Color [][] subImage) {
         double graySum = 0;
-        for (int i=0; i<subImage.length; i++) {
-            for (int j=0; j<subImage[i].length; j++) {
+        for (int i=0; i<subImage.length - 1; i++) {
+            for (int j=0; j<subImage[i].length - 1; j++) {
                 graySum += paintPixelGray(subImage[i][j]);
 
             }
         }
         return graySum/(subImage.length*subImage[0].length)*MAX_RGB_SCORE;
-
     }
 
     private void createSubImages() {
@@ -66,6 +67,7 @@ public class ImageConverter {
         int numberOfSubImages = oldHeight*oldWidth/newWidth*newHeight;
         for (int i = 0; i < numberOfSubImages; i++) {
             Color [][] subImage = processSubImage(newWidth, newHeight, i);
+            subImagesArray.add(subImage);
             subImages.put(subImage,calculateSubImageBrightness(subImage));
         }
 
@@ -73,5 +75,9 @@ public class ImageConverter {
 
     public HashMap<Color[][],Double> getNewResolutionArray(){
         return subImages;
+    }
+
+    public ArrayList<Color[][]> getSubImagesArray() {
+        return subImagesArray;
     }
 }
