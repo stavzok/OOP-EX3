@@ -14,18 +14,16 @@ public class main {
         }
 
 
-        char[] asciiChars = {'0', '1', '2', '3', '4', '5', '6', '7','8','9'};
-
-        int resolution = 128;
+        char[] asciiChars = new char[95]; // 126 - 32 + 1 = 95 characters
+        for (int i = 0; i < asciiChars.length; i++) {
+            asciiChars[i] = (char)(i + 32);
+        }
+        int resolution = 256;
 
         AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, asciiChars);
         char[][] asciiImage = algo.run();
-        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/stav/IdeaProjects/OOP-EX3/examples/catNew.html",
-                "Courier New");
+        HtmlAsciiOutput asciiOutput = new HtmlAsciiOutput("C:/Users/stav/IdeaProjects/OOP-EX3/examples/catNew.html", "Courier New");
         asciiOutput.out(asciiImage);
-
-
-
 
     }
 }

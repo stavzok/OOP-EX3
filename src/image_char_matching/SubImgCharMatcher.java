@@ -17,8 +17,6 @@ public class SubImgCharMatcher {
         this.brightnessMap = new HashMap<>();
         calculateBrightness();
         normalizeBrightness();
-
-
     }
 
     private double calculateSingleCharBrightness(char c) {
@@ -32,7 +30,7 @@ public class SubImgCharMatcher {
                 }
             }
         }
-        double brightness = count / (double) tempArray.length * tempArray[0].length;
+        double brightness = count / ((double) tempArray.length * tempArray[0].length);
         brightnessMap.put(c, brightness);
         return brightness;
 

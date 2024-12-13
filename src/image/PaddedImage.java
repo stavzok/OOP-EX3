@@ -4,8 +4,11 @@ import java.awt.*;
 
 public class PaddedImage{
     Image image;
-    Color [][] pixelArray;
+    Image oldImage;
+
+    Color [] [] pixelArray;
     public PaddedImage(Image oldImage) {
+        this.oldImage = oldImage;
         int newWidth = closestPowerOfTwo(oldImage.getWidth());
         int newHeight = closestPowerOfTwo(oldImage.getHeight());
         if (newWidth == oldImage.getWidth() && newHeight == oldImage.getHeight()) {
@@ -24,7 +27,7 @@ public class PaddedImage{
         for (int i = 0; i < newHeight; i++) {
             for (int j = 0; j < newWidth; j++) {
                 if (i < diffHeight || i > (newHeight - diffHeight) - 1 || j <diffWidth || j > (newWidth - diffWidth) - 1 ) {
-                    newPixelArray[i][j] = new Color(0,0,0);
+                    newPixelArray[i][j] = new Color(255,255,255);
                 }
                 else {
                     newPixelArray[i][j] = oldImage.getPixel(i - diffHeight,j - diffWidth);
@@ -44,5 +47,9 @@ public class PaddedImage{
 
     public Image getImage() {
         return image;
+    }
+
+    public Image getOldImage() {
+        return oldImage;
     }
 }
