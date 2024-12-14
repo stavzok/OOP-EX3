@@ -52,9 +52,7 @@ public class SubImgCharMatcher {
                     (value - minBrightness) / (maxBrightness - minBrightness);
             normalizedBrightnessMap.put(key, newCharBrightness);
         }
-
     }
-
 
     public char getCharByImageBrightness(double brightness){
         char closestChar = '\0'; // Default value (null character)
@@ -71,24 +69,17 @@ public class SubImgCharMatcher {
         return closestChar;
     }
 
-
     public void addChar(char c){
         double charBrightness = calculateSingleCharBrightness(c);
         if (charBrightness < minBrightness || charBrightness > maxBrightness) {
             normalizeBrightness();
         }
-        else{
-
+        else {
             Double newCharBrightness =
                     (charBrightness - minBrightness) / (maxBrightness - minBrightness);
             normalizedBrightnessMap.put(c, newCharBrightness);
-
         }
-
-
-
     }
-
 
     public void removeChar(char c){
         Double charBrightness = normalizedBrightnessMap.get(c);
@@ -97,12 +88,9 @@ public class SubImgCharMatcher {
         if (charBrightness == minBrightness || charBrightness == maxBrightness) {
             normalizeBrightness();
         }
-
     }
 
     public HashMap<Character, Double> getNormalizedBrightnessMap(){
         return normalizedBrightnessMap;
     }
-
-
 }

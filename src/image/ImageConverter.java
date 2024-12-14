@@ -16,8 +16,6 @@ public class ImageConverter {
     private final int MAX_RGB_SCORE = 255;
     private final ArrayList<Color[][]> subImagesArray = new ArrayList<>();
 
-
-
     public ImageConverter(PaddedImage paddedImage, int resolution) {
         this.paddedImage = paddedImage;
         this.oldWidth = paddedImage.getImage().getWidth();
@@ -25,7 +23,6 @@ public class ImageConverter {
         this.resolution = resolution;
         subImages = new HashMap<>();
         createSubImages();
-
     }
 
     private double paintPixelGray(Color color) {

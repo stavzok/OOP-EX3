@@ -15,12 +15,14 @@ public class AsciiArtAlgorithm {
     private final SubImgCharMatcher subImgCharMatcher;
     private final PaddedImage paddedImage;
     private final ImageConverter imageConverter;
+    private String roundMethod;
 
-    public AsciiArtAlgorithm(Image originalImage, int resolution, char [] asciiChars) {
+    public AsciiArtAlgorithm(Image originalImage, int resolution, char [] asciiChars, String roundMethod) {
         this.resolution = resolution;
         this.subImgCharMatcher = new SubImgCharMatcher(asciiChars);
         this.paddedImage = new PaddedImage(originalImage);
         this.imageConverter = new ImageConverter(paddedImage, resolution);
+        this.roundMethod = roundMethod;
     }
 
     private HashMap<Color[][], Character> matchAsciiToSubImage(
@@ -42,7 +44,6 @@ public class AsciiArtAlgorithm {
     private Character findClosestCharacters(HashMap<Character, Double> asciiMap, Double targetBrightness) {
         Character closestChar = null;
         double minDifference = Double.MAX_VALUE;
-        double nextMinDifference = Double.MAX_VALUE;
 
         for (Map.Entry<Character, Double> asciiEntry : asciiMap.entrySet()) {
             char asciiChar = asciiEntry.getKey();
@@ -50,17 +51,28 @@ public class AsciiArtAlgorithm {
 
             double difference = Math.abs(asciiBrightness - targetBrightness);
 
-            if (difference < minDifference) {
-                // Update second closest before replacing the closest
-                nextMinDifference = minDifference;
+            // Check rounding mode to decide the closest match
+            switch (roundMethod) {
+                case "abs": // Find the closest in absolute value
+                    if (difference < minDifference) {
+                        closestChar = asciiChar;
+                        minDifference = difference;
+                    }
+                    break;
 
-                // Update closest
-                closestChar = asciiChar;
-                minDifference = difference;
-            }
-            else if (difference < nextMinDifference) {
-                // Update second closest only
-                nextMinDifference = difference;
+                case "up": // Find the smallest value bigger than or equal to the target
+                    if (asciiBrightness >= targetBrightness && difference < minDifference) {
+                        closestChar = asciiChar;
+                        minDifference = difference;
+                    }
+                    break;
+
+                case "down": // Find the largest value smaller than or equal to the target
+                    if (asciiBrightness <= targetBrightness && difference < minDifference) {
+                        closestChar = asciiChar;
+                        minDifference = difference;
+                    }
+                    break;
             }
         }
 
