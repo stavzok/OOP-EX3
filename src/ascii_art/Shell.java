@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class Shell {
-    private final int DEFAULT_RESOLUTION = 2;
+    private final int DEFAULT_RESOLUTION = 256;
     private final String ROUNDING_MODE = "abs";
     private final char[] DEFAULT_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private final AsciiOutput DEFAULT_OUTPUT = new ConsoleAsciiOutput();
@@ -51,11 +51,13 @@ public class Shell {
         // Print the sorted characters
         HashSet<Character> charSet = subImgCharMatcher.getCharSet();
         char[] sortedChars = charSet.stream()
+                .sorted() // Sort the stream of characters
                 .map(String::valueOf) // Convert each Character to String
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append) // Combine to a single String
                 .toString()
                 .toCharArray();
 
+        // Print the sorted characters
         for (char c : sortedChars) {
             System.out.print(c + " ");
         }
@@ -305,7 +307,7 @@ public class Shell {
     public static void main(String[] args) {
         Shell shell = new Shell();
         try {
-            shell.run("cat");
+            shell.run("C:/Users/stav/IdeaProjects/OOP-EX3/examples/cat.jpeg");
         }
         catch (IOException e) {
             throw new RuntimeException(e); // think about it!!
