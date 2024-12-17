@@ -17,9 +17,9 @@ public class AsciiArtAlgorithm {
     private final ImageConverter imageConverter;
     private String roundMethod;
 
-    public AsciiArtAlgorithm(Image originalImage, int resolution, char [] asciiChars, String roundMethod) {
+    public AsciiArtAlgorithm(Image originalImage, int resolution, SubImgCharMatcher subImgCharMatcher, String roundMethod) {
         this.resolution = resolution;
-        this.subImgCharMatcher = new SubImgCharMatcher(asciiChars);
+        this.subImgCharMatcher = subImgCharMatcher;
         this.paddedImage = new PaddedImage(originalImage);
         this.imageConverter = new ImageConverter(paddedImage, resolution);
         this.roundMethod = roundMethod;
@@ -45,6 +45,11 @@ public class AsciiArtAlgorithm {
         Character closestChar = null;
         double minDifference = Double.MAX_VALUE;
 
+
+        if (roundMethod.equals("abs")){
+            return subImgCharMatcher.getCharByImageBrightness(targetBrightness);
+        }
+
         for (Map.Entry<Character, Double> asciiEntry : asciiMap.entrySet()) {
             char asciiChar = asciiEntry.getKey();
             Double asciiBrightness = asciiEntry.getValue();
@@ -53,12 +58,6 @@ public class AsciiArtAlgorithm {
 
             // Check rounding mode to decide the closest match
             switch (roundMethod) {
-                case "abs": // Find the closest in absolute value
-                    if (difference < minDifference) {
-                        closestChar = asciiChar;
-                        minDifference = difference;
-                    }
-                    break;
 
                 case "up": // Find the smallest value bigger than or equal to the target
                     if (asciiBrightness >= targetBrightness && difference < minDifference) {

@@ -1,18 +1,22 @@
 package image_char_matching;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 
 public class SubImgCharMatcher {
-    private final char[] charArray;
+    private final HashSet<Character> charSet;
     private final HashMap<Character, Double> brightnessMap;
     private final HashMap<Character, Double> normalizedBrightnessMap;
     private double maxBrightness;
     private double minBrightness;
 
 
-    public SubImgCharMatcher(char[] charset) {
-        this.charArray = charset;
+    public SubImgCharMatcher(char[] charArray) {
+        charSet = new HashSet<>();
+        for (char c : charArray) {
+            charSet.add(c);
+        }
         this.normalizedBrightnessMap = new HashMap<>();
         this.brightnessMap = new HashMap<>();
         calculateBrightness();
@@ -37,7 +41,7 @@ public class SubImgCharMatcher {
     }
 
     private void calculateBrightness() {
-        for (char c : charArray) {
+        for (char c : charSet) { // Iterate over the HashSet
             calculateSingleCharBrightness(c);
         }
     }
@@ -70,24 +74,33 @@ public class SubImgCharMatcher {
     }
 
     public void addChar(char c){
-        double charBrightness = calculateSingleCharBrightness(c);
-        if (charBrightness < minBrightness || charBrightness > maxBrightness) {
-            normalizeBrightness();
-        }
-        else {
-            Double newCharBrightness =
-                    (charBrightness - minBrightness) / (maxBrightness - minBrightness);
-            normalizedBrightnessMap.put(c, newCharBrightness);
+        int oldSize = charSet.size();
+        charSet.add(c);
+        int newSize = charSet.size();
+        if (oldSize != newSize) {
+            double charBrightness = calculateSingleCharBrightness(c);
+            if (charBrightness < minBrightness || charBrightness > maxBrightness) {
+                normalizeBrightness();
+            } else {
+                Double newCharBrightness =
+                        (charBrightness - minBrightness) / (maxBrightness - minBrightness);
+                normalizedBrightnessMap.put(c, newCharBrightness);
+            }
         }
     }
 
     public void removeChar(char c){
+        charSet.remove(c);
         Double charBrightness = normalizedBrightnessMap.get(c);
         normalizedBrightnessMap.remove(c);
         brightnessMap.remove(c);
         if (charBrightness == minBrightness || charBrightness == maxBrightness) {
             normalizeBrightness();
         }
+    }
+
+    public HashSet<Character> getCharSet(){
+        return charSet;
     }
 
     public HashMap<Character, Double> getNormalizedBrightnessMap(){

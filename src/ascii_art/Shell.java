@@ -3,8 +3,10 @@ import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
 import ascii_output.HtmlAsciiOutput;
 import image.Image;
+import image_char_matching.SubImgCharMatcher;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.HashSet;
 
 public class Shell {
@@ -12,23 +14,20 @@ public class Shell {
     private final String ROUNDING_MODE = "abs";
     private final char[] DEFAULT_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
     private final AsciiOutput DEFAULT_OUTPUT = new ConsoleAsciiOutput();
-    private HashSet<Character> charSet;
     private final HashSet<Character> ASCII_CHARS;
     private int resolution;
     private String roundMethod;
     private AsciiOutput outputFormat;
     private final String font = "Courier new";
     private final String outputFile = "out.html";
+    private final SubImgCharMatcher subImgCharMatcher;
 
     public Shell() {
-        this.charSet = new HashSet<>();
-        for (char c : DEFAULT_CHARS) {
-            charSet.add(c);
-        }
         this.ASCII_CHARS = buildAsciiChars();
         this.resolution = DEFAULT_RESOLUTION;
         this.roundMethod = ROUNDING_MODE;
         this.outputFormat = DEFAULT_OUTPUT;
+        this.subImgCharMatcher = new SubImgCharMatcher(DEFAULT_CHARS);
     }
 
     private HashSet<Character> buildAsciiChars() {
@@ -41,6 +40,7 @@ public class Shell {
 
     private void printCharArray() {
         // Print the sorted characters
+        HashSet<Character> charSet = subImgCharMatcher.getCharSet();
         char[] sortedChars = charSet.stream()
                 .map(String::valueOf) // Convert each Character to String
                 .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append) // Combine to a single String
@@ -56,16 +56,16 @@ public class Shell {
     private void handleAdd(String command) {
         if (command.equals("all")) {
             for (char c : ASCII_CHARS) {
-                charSet.add(c);
+                subImgCharMatcher.addChar(c);
             }
         }
 
         else if (command.equals("space")) {
-            charSet.add(' ');
+            subImgCharMatcher.addChar(' ');
         }
 
         else if (command.length() == 1 && ASCII_CHARS.contains(command.charAt(0))) {
-            charSet.add(command.charAt(0));
+            subImgCharMatcher.addChar(command.charAt(0));
         }
 
         else if (command.length() == 3 && ASCII_CHARS.contains(command.charAt(0)) &&
@@ -80,7 +80,7 @@ public class Shell {
                 end = temp;
             }
             for (char c = start; c <= end; c++) {
-                charSet.add(c);
+                subImgCharMatcher.addChar(c);
             }
         }
         else {
@@ -91,16 +91,16 @@ public class Shell {
     private void handleRemove(String command) {
         if (command.equals("all")) {
             for (char c : ASCII_CHARS) {
-                charSet.remove(c);
+                subImgCharMatcher.removeChar(c);
             }
         }
 
         else if (command.equals("space")) {
-            charSet.remove(' ');
+            subImgCharMatcher.removeChar(' ');
         }
 
         else if (command.length() == 1 && ASCII_CHARS.contains(command.charAt(0))) {
-            charSet.remove(command.charAt(0));
+            subImgCharMatcher.removeChar(command.charAt(0));
         }
 
         else if (command.length() == 3 && ASCII_CHARS.contains(command.charAt(0)) &&
@@ -115,7 +115,7 @@ public class Shell {
                 end = temp;
             }
             for (char c = start; c <= end; c++) {
-                charSet.remove(c);
+                subImgCharMatcher.removeChar(c);
             }
         }
         else {
@@ -154,17 +154,6 @@ public class Shell {
         }
     }
 
-    private char[] convertCharSetToArray(HashSet<Character> charSet) {
-        // Create a char[] with the same size as the HashSet
-        char[] charArray = new char[charSet.size()];
-
-        // Use a loop to copy characters from the HashSet to the array
-        int index = 0;
-        for (Character c : charSet) {
-            charArray[index++] = c; // Auto-unbox Character to char
-        }
-        return charArray;
-    }
 
     public void run(String imageName) throws IllegalArgumentException, IOException {
 
@@ -230,12 +219,11 @@ public class Shell {
                     break;
 
                 case "asciiArt":
-                    char[] chars = convertCharSetToArray(charSet);
-                    if(chars.length < 2) {
+                    if(subImgCharMatcher.getCharSet().size() < 2) {
                         System.out.println("Did not execute. Charset is too small");
                         return;
                     }
-                    AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, chars, roundMethod);
+                    AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, subImgCharMatcher, roundMethod);
                     char[][] asciiImage = algo.run();
                     outputFormat.out(asciiImage);
                     break;
@@ -243,6 +231,14 @@ public class Shell {
                     System.out.println("Did not execute due to incorrect command.");
             }
         }
+    }
+
+    public static class Memento {
+        private final HashSet<Character> oldCharSet;
+        private final HashMap<Character, Double> oldBrightnessMap;
+        private final HashMap<Character, Double> oldNormalizedBrightnessMap;
+        private int oldResolution;
+        
     }
 
     public static void main(String[] args) {
