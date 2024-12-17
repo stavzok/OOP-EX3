@@ -6,8 +6,8 @@ import java.util.HashSet;
 
 public class SubImgCharMatcher {
     private final HashSet<Character> charSet;
-    private final HashMap<Character, Double> brightnessMap;
-    private final HashMap<Character, Double> normalizedBrightnessMap;
+    private HashMap<Character, Double> brightnessMap;
+    private HashMap<Character, Double> normalizedBrightnessMap;
     private double maxBrightness;
     private double minBrightness;
 
@@ -20,7 +20,6 @@ public class SubImgCharMatcher {
         this.normalizedBrightnessMap = new HashMap<>();
         this.brightnessMap = new HashMap<>();
         calculateBrightness();
-        normalizeBrightness();
     }
 
     private double calculateSingleCharBrightness(char c) {
@@ -79,13 +78,7 @@ public class SubImgCharMatcher {
         int newSize = charSet.size();
         if (oldSize != newSize) {
             double charBrightness = calculateSingleCharBrightness(c);
-            if (charBrightness < minBrightness || charBrightness > maxBrightness) {
-                normalizeBrightness();
-            } else {
-                Double newCharBrightness =
-                        (charBrightness - minBrightness) / (maxBrightness - minBrightness);
-                normalizedBrightnessMap.put(c, newCharBrightness);
-            }
+            brightnessMap.put(c, charBrightness);
         }
     }
 
@@ -94,16 +87,26 @@ public class SubImgCharMatcher {
         Double charBrightness = normalizedBrightnessMap.get(c);
         normalizedBrightnessMap.remove(c);
         brightnessMap.remove(c);
-        if (charBrightness == minBrightness || charBrightness == maxBrightness) {
-            normalizeBrightness();
-        }
     }
+
+    public void setBrightnessMap(HashMap<Character, Double> newBrightnessMap) {
+        brightnessMap = newBrightnessMap;
+    }
+
+    public void setNormalizedBrightnessMap(HashMap<Character, Double> newNormalizedBrightnessMap) {
+        normalizedBrightnessMap = newNormalizedBrightnessMap;
+    }
+
+
 
     public HashSet<Character> getCharSet(){
         return charSet;
     }
 
+    public HashMap<Character, Double> getBrightnessMap(){return brightnessMap;}
+
     public HashMap<Character, Double> getNormalizedBrightnessMap(){
+        normalizeBrightness();
         return normalizedBrightnessMap;
     }
 }

@@ -3,8 +3,11 @@ import ascii_output.AsciiOutput;
 import ascii_output.ConsoleAsciiOutput;
 import ascii_output.HtmlAsciiOutput;
 import image.Image;
+import image.ImageConverter;
+import image.PaddedImage;
 import image_char_matching.SubImgCharMatcher;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,7 +23,13 @@ public class Shell {
     private AsciiOutput outputFormat;
     private final String font = "Courier new";
     private final String outputFile = "out.html";
-    private final SubImgCharMatcher subImgCharMatcher;
+    private SubImgCharMatcher subImgCharMatcher;
+    private ImageConverter imageConverter;
+    private PaddedImage paddedImage;
+    private int asciiCounter = 0;
+    private Memento memento;
+
+
 
     public Shell() {
         this.ASCII_CHARS = buildAsciiChars();
@@ -219,25 +228,77 @@ public class Shell {
                     break;
 
                 case "asciiArt":
+
                     if(subImgCharMatcher.getCharSet().size() < 2) {
                         System.out.println("Did not execute. Charset is too small");
                         return;
                     }
-                    AsciiArtAlgorithm algo = new AsciiArtAlgorithm(image, resolution, subImgCharMatcher, roundMethod);
+                    compareToMemento();
+                    paddedImage = new PaddedImage(image);
+                    imageConverter = new ImageConverter(paddedImage, resolution);
+                    AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher, roundMethod, imageConverter);
                     char[][] asciiImage = algo.run();
                     outputFormat.out(asciiImage);
+                    memento = saveToMemento();
+                    subImgCharMatcher = new SubImgCharMatcher(DEFAULT_CHARS);
+                    resolution = DEFAULT_RESOLUTION;
                     break;
                 default:
                     System.out.println("Did not execute due to incorrect command.");
             }
         }
     }
+    private void compareToMemento() {
+        if (memento != null) {
+            // 1. Avoid recalculating brightness values for subimages
+            if (memento.oldResolution == resolution && memento.subImageBrightnessMap != null) {
+                imageConverter.setSubImages(memento.subImageBrightnessMap);
+            }
+
+            // 2. Avoid recalculating brightness values of characters already processed
+            HashSet<Character> currentCharSet = subImgCharMatcher.getCharSet();
+            HashSet<Character> oldCharSet = memento.oldCharSet;
+
+            if (oldCharSet != null) {
+                for (char c : oldCharSet) {
+                    if (currentCharSet.contains(c) && !subImgCharMatcher.getBrightnessMap().containsKey(c)) {
+                        // Reuse old brightness values
+                        subImgCharMatcher.getBrightnessMap().put(c, memento.oldCharBrightnessMap.get(c));
+                    }
+                }
+            }
+
+            // 3. Avoid recalculating normalized brightness map
+            if (currentCharSet.equals(oldCharSet)) {
+                subImgCharMatcher.setNormalizedBrightnessMap(memento.oldCharNormalizedBrightnessMap);
+            }
+        }
+    }
+
+    public Memento saveToMemento() {
+        return new Memento(subImgCharMatcher, imageConverter, resolution);
+    }
+
+    public void restoreFromMemento(Memento memento) {
+
+    }
+
+
+
 
     public static class Memento {
-        private final HashSet<Character> oldCharSet;
-        private final HashMap<Character, Double> oldBrightnessMap;
-        private final HashMap<Character, Double> oldNormalizedBrightnessMap;
+        private  HashSet<Character> oldCharSet;
+        private  HashMap<Character, Double> oldCharBrightnessMap;
+        private  HashMap<Character, Double> oldCharNormalizedBrightnessMap;
+        private HashMap<Color[][], Double> subImageBrightnessMap;
         private int oldResolution;
+        private Memento(SubImgCharMatcher subImgCharMatcher, ImageConverter imageConverter, int resolution) {
+            this.oldCharSet = subImgCharMatcher.getCharSet();
+            this.oldCharBrightnessMap = subImgCharMatcher.getBrightnessMap();
+            this.oldCharNormalizedBrightnessMap = subImgCharMatcher.getNormalizedBrightnessMap();
+            this.subImageBrightnessMap = imageConverter.getNewResolutionArray();
+            this.oldResolution = resolution;
+        }
         
     }
 

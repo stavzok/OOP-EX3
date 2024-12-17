@@ -13,15 +13,14 @@ import java.util.Map;
 public class AsciiArtAlgorithm {
     private final int resolution;
     private final SubImgCharMatcher subImgCharMatcher;
-    private final PaddedImage paddedImage;
     private final ImageConverter imageConverter;
     private String roundMethod;
 
-    public AsciiArtAlgorithm(Image originalImage, int resolution, SubImgCharMatcher subImgCharMatcher, String roundMethod) {
+    public AsciiArtAlgorithm(int resolution, SubImgCharMatcher subImgCharMatcher, String roundMethod, ImageConverter imageConverter) {
         this.resolution = resolution;
         this.subImgCharMatcher = subImgCharMatcher;
-        this.paddedImage = new PaddedImage(originalImage);
-        this.imageConverter = new ImageConverter(paddedImage, resolution);
+
+        this.imageConverter = imageConverter;
         this.roundMethod = roundMethod;
     }
 
@@ -80,8 +79,8 @@ public class AsciiArtAlgorithm {
 
     private char[][] createAsciiImage(HashMap<Color[][], Character> resultMap) {
         // Create char array with the same dimensions as the padded image
-        int paddedWidth = paddedImage.getImage().getWidth();
-        int paddedHeight = paddedImage.getImage().getHeight();
+        int paddedWidth = imageConverter.getPaddedImage().getImage().getWidth();
+        int paddedHeight = imageConverter.getPaddedImage().getImage().getHeight();
         char[][] asciiArt = new char[paddedHeight][paddedWidth];
 
         // Fill with spaces initially

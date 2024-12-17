@@ -7,7 +7,7 @@ import java.util.HashMap;
 public class ImageConverter {
     private final PaddedImage paddedImage;
     private final int resolution;
-    private final HashMap<Color[][], Double> subImages;
+    private HashMap<Color[][], Double> subImages;
     private final int oldWidth;
     private final int oldHeight;
     private final double RED_FACTOR = 0.2126;
@@ -70,6 +70,11 @@ public class ImageConverter {
         }
     }
 
+    public void setSubImages(HashMap<Color[][], Double> newSubImages) {
+        subImages = newSubImages;
+
+    }
+
     public HashMap<Color[][],Double> getNewResolutionArray(){
         return subImages;
     }
@@ -77,4 +82,6 @@ public class ImageConverter {
     public ArrayList<Color[][]> getSubImagesArray() {
         return subImagesArray;
     }
+
+    public PaddedImage getPaddedImage() {return paddedImage;}
 }
