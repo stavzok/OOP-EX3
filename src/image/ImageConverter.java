@@ -60,6 +60,7 @@ public class ImageConverter {
     }
 
     private void createSubImages() {
+        System.out.println("calculating sub images...");
         int subImageWidth = oldWidth / resolution;     // width of each subimage
         int subImageHeight = oldHeight / resolution;   // height of each subimage
         int numberOfSubImages = resolution * (oldHeight / subImageHeight);

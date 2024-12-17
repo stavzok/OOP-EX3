@@ -16,10 +16,10 @@ public class AsciiArtAlgorithm {
     private final ImageConverter imageConverter;
     private String roundMethod;
 
-    public AsciiArtAlgorithm(int resolution, SubImgCharMatcher subImgCharMatcher, String roundMethod, ImageConverter imageConverter) {
+    public AsciiArtAlgorithm(int resolution, SubImgCharMatcher subImgCharMatcher,
+                             String roundMethod, ImageConverter imageConverter) {
         this.resolution = resolution;
         this.subImgCharMatcher = subImgCharMatcher;
-
         this.imageConverter = imageConverter;
         this.roundMethod = roundMethod;
     }

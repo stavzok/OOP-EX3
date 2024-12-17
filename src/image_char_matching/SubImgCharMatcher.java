@@ -5,7 +5,7 @@ import java.util.HashSet;
 
 
 public class SubImgCharMatcher {
-    private final HashSet<Character> charSet;
+    private HashSet<Character> charSet;
     private HashMap<Character, Double> brightnessMap;
     private HashMap<Character, Double> normalizedBrightnessMap;
     private double maxBrightness;
@@ -23,7 +23,8 @@ public class SubImgCharMatcher {
     }
 
     private double calculateSingleCharBrightness(char c) {
-        boolean[][] tempArray = new boolean[16][16];
+        System.out.println("Calculating single char brightness...");
+        boolean[][] tempArray;
         tempArray = CharConverter.convertToBoolArray(c);
         int count = 0;
         for (int i = 0; i < tempArray.length; i++) {
@@ -41,11 +42,13 @@ public class SubImgCharMatcher {
 
     private void calculateBrightness() {
         for (char c : charSet) { // Iterate over the HashSet
+            System.out.println("Calculating brightness...");
             calculateSingleCharBrightness(c);
         }
     }
 
-    private void normalizeBrightness() {
+    public void normalizeBrightness() {
+        System.out.println("Normalizing...");
         minBrightness = Collections.min(brightnessMap.values());
         maxBrightness = Collections.max(brightnessMap.values());
         for (HashMap.Entry<Character, Double> entry : brightnessMap.entrySet()) {
@@ -60,8 +63,6 @@ public class SubImgCharMatcher {
     public char getCharByImageBrightness(double brightness){
         char closestChar = '\0'; // Default value (null character)
         double minDifference = Double.MAX_VALUE; // Start with the largest possible difference
-
-
         for (HashMap.Entry<Character, Double> entry : normalizedBrightnessMap.entrySet()) {
             double difference = Math.abs(entry.getValue() - brightness); // Absolute difference
             if (difference < minDifference || (difference == minDifference && entry.getKey() < closestChar)) {
@@ -89,15 +90,9 @@ public class SubImgCharMatcher {
         brightnessMap.remove(c);
     }
 
-    public void setBrightnessMap(HashMap<Character, Double> newBrightnessMap) {
-        brightnessMap = newBrightnessMap;
-    }
-
     public void setNormalizedBrightnessMap(HashMap<Character, Double> newNormalizedBrightnessMap) {
         normalizedBrightnessMap = newNormalizedBrightnessMap;
     }
-
-
 
     public HashSet<Character> getCharSet(){
         return charSet;
@@ -106,7 +101,7 @@ public class SubImgCharMatcher {
     public HashMap<Character, Double> getBrightnessMap(){return brightnessMap;}
 
     public HashMap<Character, Double> getNormalizedBrightnessMap(){
-        normalizeBrightness();
         return normalizedBrightnessMap;
     }
+
 }

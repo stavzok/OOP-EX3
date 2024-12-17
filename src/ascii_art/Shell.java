@@ -26,7 +26,6 @@ public class Shell {
     private SubImgCharMatcher subImgCharMatcher;
     private ImageConverter imageConverter;
     private PaddedImage paddedImage;
-    private int asciiCounter = 0;
     private Memento memento;
 
 
@@ -165,7 +164,6 @@ public class Shell {
         }
     }
 
-
     public void run(String imageName) throws IllegalArgumentException, IOException {
 
         Image image;
@@ -235,26 +233,35 @@ public class Shell {
                         System.out.println("Did not execute. Charset is too small");
                         return;
                     }
-                    compareToMemento();
-                    paddedImage = new PaddedImage(image);
-                    imageConverter = new ImageConverter(paddedImage, resolution);
+                    if(!compareToMemento()[0]) {
+                        paddedImage = new PaddedImage(image);
+                        imageConverter = new ImageConverter(paddedImage, resolution);
+                    }
+
+                    if(!compareToMemento()[1]) {
+                        subImgCharMatcher.normalizeBrightness();
+                    }
+
                     AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher, roundMethod, imageConverter);
                     char[][] asciiImage = algo.run();
                     outputFormat.out(asciiImage);
                     memento = saveToMemento();
-                    subImgCharMatcher = new SubImgCharMatcher(DEFAULT_CHARS);
                     resolution = DEFAULT_RESOLUTION;
                     break;
                 default:
+                    // replace with try catch?
                     System.out.println("Did not execute due to incorrect command.");
             }
         }
     }
-    private void compareToMemento() {
+
+    private boolean[] compareToMemento() {
+        boolean flag[] = {false, false};
         if (memento != null) {
             // 1. Avoid recalculating brightness values for subimages
             if (memento.oldResolution == resolution && memento.subImageBrightnessMap != null) {
                 imageConverter.setSubImages(memento.subImageBrightnessMap);
+                flag[0] = true;
             }
 
             // 2. Avoid recalculating brightness values of characters already processed
@@ -273,22 +280,17 @@ public class Shell {
             // 3. Avoid recalculating normalized brightness map
             if (currentCharSet.equals(oldCharSet)) {
                 subImgCharMatcher.setNormalizedBrightnessMap(memento.oldCharNormalizedBrightnessMap);
+                flag[1] = true;
             }
         }
+        return flag;
     }
 
-    public Memento saveToMemento() {
+    private Memento saveToMemento() {
         return new Memento(subImgCharMatcher, imageConverter, resolution);
     }
 
-    public void restoreFromMemento(Memento memento) {
-
-    }
-
-
-
-
-    public static class Memento {
+    private static class Memento {
         private  HashSet<Character> oldCharSet;
         private  HashMap<Character, Double> oldCharBrightnessMap;
         private  HashMap<Character, Double> oldCharNormalizedBrightnessMap;
@@ -307,7 +309,7 @@ public class Shell {
     public static void main(String[] args) {
         Shell shell = new Shell();
         try {
-            shell.run("C:/Users/stav/IdeaProjects/OOP-EX3/examples/cat.jpeg");
+            shell.run("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat.jpeg");
         }
         catch (IOException e) {
             throw new RuntimeException(e); // think about it!!
