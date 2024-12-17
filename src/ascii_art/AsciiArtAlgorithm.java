@@ -10,12 +10,33 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The AsciiArtAlgorithm class generates ASCII art from an image.
+ * It converts sub-images into ASCII characters based on brightness values.
+ */
+
 public class AsciiArtAlgorithm {
+    /* Resolution determines the number of columns for the ASCII output. */
+
     private final int resolution;
+    /* Matcher to map sub-images to ASCII characters based on brightness. */
+
     private final SubImgCharMatcher subImgCharMatcher;
+    /* Image converter to process the image and split it into sub-images. */
+
     private final ImageConverter imageConverter;
+    /* Rounding method for matching brightness ("up", "down", or "abs"). */
+
     private String roundMethod;
 
+    /**
+     * Constructs an AsciiArtAlgorithm instance.
+     *
+     * @param resolution         The number of columns in the ASCII output.
+     * @param subImgCharMatcher  A matcher for comparing brightness values.
+     * @param roundMethod        The rounding method for brightness matching.
+     * @param imageConverter     The converter for splitting the image into sub-images.
+     */
     public AsciiArtAlgorithm(int resolution, SubImgCharMatcher subImgCharMatcher,
                              String roundMethod, ImageConverter imageConverter) {
         this.resolution = resolution;
@@ -23,6 +44,14 @@ public class AsciiArtAlgorithm {
         this.imageConverter = imageConverter;
         this.roundMethod = roundMethod;
     }
+
+    /**
+     * Matches each sub-image to its closest ASCII character based on brightness.
+     *
+     * @param subImages A map of sub-images and their corresponding brightness values.
+     * @param asciiMap  A map of ASCII characters and their normalized brightness values.
+     * @return A map of sub-images and their matched ASCII characters.
+     */
 
     private HashMap<Color[][], Character> matchAsciiToSubImage(
             HashMap<Color[][], Double> subImages,
@@ -33,21 +62,31 @@ public class AsciiArtAlgorithm {
             Color[][] subImage = subImageEntry.getKey();
             Double subImageBrightness = subImageEntry.getValue();
 
-            // Find the two closest characters
+            // Find the closest character for the sub-image brightness
             Character closestChar = findClosestCharacters(asciiMap, subImageBrightness);
-            resultMap.put(subImage, closestChar); // Store the closest characters
+            resultMap.put(subImage, closestChar); // Store the closest character
         }
         return resultMap;
     }
+
+    /**
+     * Finds the closest ASCII character to a given brightness value.
+     *
+     * @param asciiMap         A map of ASCII characters and their brightness values.
+     * @param targetBrightness The brightness value of the sub-image.
+     * @return The closest ASCII character based on the selected rounding method.
+     */
 
     private Character findClosestCharacters(HashMap<Character, Double> asciiMap, Double targetBrightness) {
         Character closestChar = null;
         double minDifference = Double.MAX_VALUE;
 
+        // Use absolute matching if roundMethod is "abs"
 
         if (roundMethod.equals("abs")){
             return subImgCharMatcher.getCharByImageBrightness(targetBrightness);
         }
+        // Find the closest character based on the selected rounding method
 
         for (Map.Entry<Character, Double> asciiEntry : asciiMap.entrySet()) {
             char asciiChar = asciiEntry.getKey();
@@ -76,6 +115,13 @@ public class AsciiArtAlgorithm {
 
         return closestChar;
     }
+
+    /*
+     * Creates a 2D ASCII art representation from matched sub-images and characters.
+     *
+     * @param resultMap A map of sub-images and their matched ASCII characters.
+     * @return A 2D char array representing the ASCII art.
+     */
 
     private char[][] createAsciiImage(HashMap<Color[][], Character> resultMap) {
         // Create char array with the same dimensions as the padded image
@@ -107,6 +153,12 @@ public class AsciiArtAlgorithm {
         }
         return asciiArt;
     }
+
+    /**
+     * Runs the ASCII art generation process.
+     *
+     * @return A 2D char array representing the generated ASCII art.
+     */
 
     public char [][] run(){
         HashMap<Color[][],Double> subImages = imageConverter.getNewResolutionArray();
