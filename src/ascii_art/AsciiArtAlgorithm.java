@@ -45,7 +45,7 @@ public class AsciiArtAlgorithm {
         this.roundMethod = roundMethod;
     }
 
-    /**
+    /*
      * Matches each sub-image to its closest ASCII character based on brightness.
      *
      * @param subImages A map of sub-images and their corresponding brightness values.
@@ -69,7 +69,7 @@ public class AsciiArtAlgorithm {
         return resultMap;
     }
 
-    /**
+    /*
      * Finds the closest ASCII character to a given brightness value.
      *
      * @param asciiMap         A map of ASCII characters and their brightness values.

@@ -55,7 +55,7 @@ public class ImageConverter {
         createSubImages();
     }
 
-    /**
+    /*
      * Converts a pixel's color into its grayscale brightness.
      *
      * @param color The color of the pixel.
@@ -69,7 +69,7 @@ public class ImageConverter {
         return red + green + blue;
     }
 
-    /**
+    /*
      * Extracts a sub-image from the padded image based on its index, width, and height.
      *
      * @param newWidth       The width of the sub-image.
@@ -95,7 +95,7 @@ public class ImageConverter {
         return subImage;
     }
 
-    /**
+    /*
      * Calculates the average grayscale brightness of a sub-image.
      *
      * @param subImage A 2D Color array representing the sub-image.

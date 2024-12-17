@@ -354,7 +354,7 @@ public class Shell {
     }
 
 
-    /**
+    /*
      * Compares the current state with the saved Memento to avoid redundant recalculations.
      *
      * @return A boolean array where:
@@ -400,7 +400,7 @@ public class Shell {
         return new Memento(subImgCharMatcher, imageConverter, resolution);
     }
 
-    /**
+    /*
      * Inner class representing a snapshot of the Shell state for optimization.
      */
 

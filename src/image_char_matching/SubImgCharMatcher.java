@@ -89,11 +89,15 @@ public class SubImgCharMatcher {
             normalizedBrightnessMap.put(key, newCharBrightness);
         }
     }
-
     /**
-     * Adds a character to the set and calculates its brightness value.
+     * Finds the closest matching character for a given brightness value.
+     * The method iterates through the normalized brightness map and determines
+     * the character whose brightness value is closest to the provided target.
+     * In case of ties (equal differences), the lexicographically smaller character is chosen.
      *
-     * @param c The character to be added.
+     * @param brightness The target brightness value to match, between 0 and 1.
+     * @return The character whose brightness value is closest to the target.
+     *         Returns '\0' (null character) if the map is empty or no match is found.
      */
     public char getCharByImageBrightness(double brightness){
         char closestChar = '\0'; // Default value (null character)
