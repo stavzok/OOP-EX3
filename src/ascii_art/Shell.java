@@ -22,7 +22,7 @@ import java.util.HashSet;
 
 public class Shell {
     /* Default resolution for ASCII art generation. */
-    private final int DEFAULT_RESOLUTION = 256;
+    private final int DEFAULT_RESOLUTION = 2;
     /* Default rounding mode for brightness calculations. */
 
     private final String ROUNDING_MODE = "abs";
@@ -427,7 +427,7 @@ public class Shell {
      */
     public static void main(String[] args) {
         Shell shell = new Shell();
-        shell.run("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat.jpeg");
+        shell.run(args[0]);
     }
 }
 

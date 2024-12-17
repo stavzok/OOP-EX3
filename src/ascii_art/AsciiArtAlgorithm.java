@@ -27,7 +27,7 @@ public class AsciiArtAlgorithm {
     private final ImageConverter imageConverter;
     /* Rounding method for matching brightness ("up", "down", or "abs"). */
 
-    private String roundMethod;
+    private final String roundMethod;
 
     /**
      * Constructs an AsciiArtAlgorithm instance.
