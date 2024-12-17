@@ -195,15 +195,14 @@ public class Shell {
         }
     }
 
-    /**
+    /*
      * Handles changes to the resolution of the ASCII art.
      *
      * @param resCommand The command indicating whether to increase ("up") or reset ("down") the resolution.
      * @return The new resolution value after applying the change.
      * @throws IOException If the command is invalid.
      */
-
-    private int handleResChange(String resCommand) throws IOException {
+    private int handleResChange(String resCommand) {
         int newRes = 0;
         if(resCommand.equals("up")) {
             newRes = resolution * 2;
@@ -212,39 +211,37 @@ public class Shell {
             newRes = resolution = 2;
         }
         else {
-            throw new IOException();
+            throw new IllegalArgumentException();
         }
         return newRes;
     }
 
-    /**
+    /*
      * Handles changes to the rounding method used in brightness calculations.
      *
      * @param command The new rounding method ("up", "down", or "abs").
      * @throws IOException If the provided command is invalid.
      */
-
-    private void handleRound(String command) throws IOException {
+    private void handleRound(String command) {
         switch (command) {
             case "up" -> roundMethod = "up";
             case "down" -> roundMethod = "down";
             case "abs" -> roundMethod = "abs";
-            default -> throw new IOException();
+            default -> throw new IllegalArgumentException();
         }
     }
 
-    /**
+    /*
      * Handles changes to the output format for the ASCII art.
      *
      * @param command The new output method ("console" for console output or "html" for HTML file output).
      * @throws IOException If the provided command is invalid.
      */
-
-    private void handleOutputMethod(String command) throws IOException {
+    private void handleOutputMethod(String command) {
         switch (command) {
             case "console" -> outputFormat = new ConsoleAsciiOutput();
             case "html" -> outputFormat = new HtmlAsciiOutput(outputFile, font);
-            default -> throw new IOException();
+            default -> throw new IllegalArgumentException();
         }
     }
 
@@ -254,7 +251,6 @@ public class Shell {
      *
      * @param imageName The name of the image file to process.
      */
-
     public void run(String imageName) {
 
         Image image;
@@ -276,7 +272,12 @@ public class Shell {
                     case "res":
                         int newRes = resolution;
                         if (inputAnswer.split(" ").length > 1) {
-                            newRes = handleResChange(inputAnswer.split(" ")[1]);
+                            try {
+                                newRes = handleResChange(inputAnswer.split(" ")[1]);
+                            }
+                            catch (IllegalArgumentException e) {
+                                System.out.println("Did not change resolution due to incorrect format.");
+                            }
                         }
                         if (newRes > maxResolution || newRes < minResolution) {
                             System.out.println("Did not change resolution due to exceeding boundaries");
@@ -301,11 +302,12 @@ public class Shell {
                             System.out.println("Did not remove due to incorrect format.");
                         }
                         break;
-                    case "round":
+
+                        case "round":
                         try {
                             handleRound(command);
                         }
-                        catch (IOException e) {
+                        catch (IllegalArgumentException e) {
                             System.out.println("Did not change rounding method due to incorrect format.");
 
                         }
@@ -314,13 +316,12 @@ public class Shell {
                         try {
                             handleOutputMethod(command);
                         }
-                        catch (IOException e) {
+                        catch (IllegalArgumentException e) {
                             System.out.println("Did not change output method due to incorrect format.");
                         }
                         break;
 
                     case "asciiArt":
-
                         if(subImgCharMatcher.getCharSet().size() < 2) {
                             System.out.println("Did not execute. Charset is too small");
                             return;

@@ -29,7 +29,6 @@ public class SubImgCharMatcher {
      *
      * @param charArray An array of characters to be used for matching.
      */
-
     public SubImgCharMatcher(char[] charArray) {
         charSet = new HashSet<>();
         for (char c : charArray) {
@@ -39,13 +38,13 @@ public class SubImgCharMatcher {
         this.brightnessMap = new HashMap<>();
         calculateBrightness();
     }
+
     /*
      * Calculates the brightness of a single character by analyzing its boolean representation.
      *
      * @param c The character whose brightness is to be calculated.
      * @return The calculated brightness value of the character.
      */
-
     private double calculateSingleCharBrightness(char c) {
         System.out.println("Calculating single char brightness...");
         boolean[][] tempArray;
@@ -63,10 +62,10 @@ public class SubImgCharMatcher {
         return brightness;
 
     }
+
     /*
      * Calculates brightness values for all characters in the set.
      */
-
     private void calculateBrightness() {
         for (char c : charSet) { // Iterate over the HashSet
             System.out.println("Calculating brightness...");
@@ -78,7 +77,6 @@ public class SubImgCharMatcher {
      * Normalizes the brightness values of all characters.
      * Scales the brightness values to a range between 0 and 1.
      */
-
     public void normalizeBrightness() {
         System.out.println("Normalizing...");
         minBrightness = Collections.min(brightnessMap.values());
@@ -91,12 +89,12 @@ public class SubImgCharMatcher {
             normalizedBrightnessMap.put(key, newCharBrightness);
         }
     }
+
     /**
      * Adds a character to the set and calculates its brightness value.
      *
      * @param c The character to be added.
      */
-
     public char getCharByImageBrightness(double brightness){
         char closestChar = '\0'; // Default value (null character)
         double minDifference = Double.MAX_VALUE; // Start with the largest possible difference
