@@ -253,99 +253,103 @@ public class Shell {
      * Runs the command-line interface for generating ASCII art.
      *
      * @param imageName The name of the image file to process.
-     * @throws IllegalArgumentException If the image name is invalid.
-     * @throws IOException If there is an error reading the image file.
      */
 
-    public void run(String imageName) throws IllegalArgumentException, IOException {
+    public void run(String imageName) {
 
         Image image;
-        image = new Image(imageName);
-        int maxResolution = image.getWidth();
-        int minResolution = Math.max(1, image.getWidth() / image.getHeight());
+        try {
+            image = new Image(imageName);
+            int maxResolution = image.getWidth();
+            int minResolution = Math.max(1, image.getWidth() / image.getHeight());
 
-        while (true) {
-            System.out.print(">>> ");
-            String inputAnswer = KeyboardInput.readLine();
-            String command = (inputAnswer.split(" ").length > 1) ? inputAnswer.split(" ")[1] : "";
-            switch (inputAnswer.split(" ")[0]) {
-                case "exit":
-                    return;
-                case "chars":
-                    printCharArray();
-                    break;
-                case "res":
-                    int newRes = resolution;
-                    if (inputAnswer.split(" ").length > 1) {
-                        newRes = handleResChange(inputAnswer.split(" ")[1]);
-                    }
-                    if (newRes > maxResolution || newRes < minResolution) {
-                        System.out.println("Did not change resolution due to exceeding boundaries");
+            while (true) {
+                System.out.print(">>> ");
+                String inputAnswer = KeyboardInput.readLine();
+                String command = (inputAnswer.split(" ").length > 1) ? inputAnswer.split(" ")[1] : "";
+                switch (inputAnswer.split(" ")[0]) {
+                    case "exit":
                         return;
-                    }
-                    resolution = newRes;
-                    System.out.println("Resolution set to " + resolution);
-                    break;
-                case "add":
-                    try {
-                        handleAdd(command);
+                    case "chars":
+                        printCharArray();
+                        break;
+                    case "res":
+                        int newRes = resolution;
+                        if (inputAnswer.split(" ").length > 1) {
+                            newRes = handleResChange(inputAnswer.split(" ")[1]);
+                        }
+                        if (newRes > maxResolution || newRes < minResolution) {
+                            System.out.println("Did not change resolution due to exceeding boundaries");
+                            return;
+                        }
+                        resolution = newRes;
+                        System.out.println("Resolution set to " + resolution);
+                        break;
+                    case "add":
+                        try {
+                            handleAdd(command);
+                        }
+                        catch (IllegalArgumentException e) {
+                            System.out.println("Did not add due to incorrect format.");
+                        }
+                        break;
+                    case "remove":
+                        try {
+                            handleRemove(command);
+                        }
+                        catch (IllegalArgumentException e) {
+                            System.out.println("Did not remove due to incorrect format.");
+                        }
+                        break;
+                    case "round":
+                        try {
+                            handleRound(command);
+                        }
+                        catch (IOException e) {
+                            System.out.println("Did not change rounding method due to incorrect format.");
+
+                        }
+                        break;
+                    case "output":
+                        try {
+                            handleOutputMethod(command);
+                        }
+                        catch (IOException e) {
+                            System.out.println("Did not change output method due to incorrect format.");
+                        }
+                        break;
+
+                    case "asciiArt":
+
+                        if(subImgCharMatcher.getCharSet().size() < 2) {
+                            System.out.println("Did not execute. Charset is too small");
+                            return;
+                        }
+                        if(!compareToMemento()[0]) {
+                            paddedImage = new PaddedImage(image);
+                            imageConverter = new ImageConverter(paddedImage, resolution);
+                        }
+
+                        if(!compareToMemento()[1]) {
+                            subImgCharMatcher.normalizeBrightness();
+                        }
+
+                        AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher, roundMethod, imageConverter);
+                        char[][] asciiImage = algo.run();
+                        outputFormat.out(asciiImage);
+                        memento = saveToMemento();
+                        resolution = DEFAULT_RESOLUTION;
+                        break;
+                    default:
+                        // replace with try catch?
+                        System.out.println("Did not execute due to incorrect command.");
                 }
-                    catch (IllegalArgumentException e) {
-                        System.out.println("Did not add due to incorrect format.");
-                    }
-                    break;
-                case "remove":
-                    try {
-                        handleRemove(command);
-                    }
-                    catch (IllegalArgumentException e) {
-                        System.out.println("Did not remove due to incorrect format.");
-                    }
-                    break;
-                case "round":
-                    try {
-                        handleRound(command);
-                    }
-                    catch (IOException e) {
-                        System.out.println("Did not change rounding method due to incorrect format.");
-
-                    }
-                    break;
-                case "output":
-                    try {
-                        handleOutputMethod(command);
-                    }
-                    catch (IOException e) {
-                        System.out.println("Did not change output method due to incorrect format.");
-                    }
-                    break;
-
-                case "asciiArt":
-
-                    if(subImgCharMatcher.getCharSet().size() < 2) {
-                        System.out.println("Did not execute. Charset is too small");
-                        return;
-                    }
-                    if(!compareToMemento()[0]) {
-                        paddedImage = new PaddedImage(image);
-                        imageConverter = new ImageConverter(paddedImage, resolution);
-                    }
-
-                    if(!compareToMemento()[1]) {
-                        subImgCharMatcher.normalizeBrightness();
-                    }
-
-                    AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher, roundMethod, imageConverter);
-                    char[][] asciiImage = algo.run();
-                    outputFormat.out(asciiImage);
-                    memento = saveToMemento();
-                    resolution = DEFAULT_RESOLUTION;
-                    break;
-                default:
-                    // replace with try catch?
-                    System.out.println("Did not execute due to incorrect command.");
             }
         }
+        catch (IOException e) {
+
+        }
+
     }
 
 
@@ -420,15 +424,9 @@ public class Shell {
      *
      * @param args Command-line arguments.
      */
-
     public static void main(String[] args) {
         Shell shell = new Shell();
-        try {
-            shell.run("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat.jpeg");
-        }
-        catch (IOException e) {
-            throw new RuntimeException(e); // think about it!!
-        }
+        shell.run("C:/Users/User/Documents/OOP/OOP-EX3/examples/cat.jpeg");
     }
 }
 

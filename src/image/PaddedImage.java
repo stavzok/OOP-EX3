@@ -36,7 +36,7 @@ public class PaddedImage{
             image = oldImage;
         }
         else {
-            this.pixelArray = extendPixleArray(oldImage, newWidth, newHeight);
+            this.pixelArray = extendPixelArray(oldImage, newWidth, newHeight);
             image = new Image(pixelArray, newWidth, newHeight);
         }
     }
@@ -50,7 +50,7 @@ public class PaddedImage{
      * @return A 2D Color array representing the padded pixel array.
      */
 
-    private Color[][] extendPixleArray(Image oldImage, int newWidth, int newHeight) {
+    private Color[][] extendPixelArray(Image oldImage, int newWidth, int newHeight) {
         int diffWidth = (newWidth - oldImage.getWidth())/2;
         int diffHeight = (newHeight - oldImage.getHeight())/2;
         Color [][] newPixelArray = new Color[newHeight][newWidth];
@@ -90,14 +90,5 @@ public class PaddedImage{
 
     public Image getImage() {
         return image;
-    }
-    /**
-     * Retrieves the original image provided as input.
-     *
-     * @return The original image before padding.
-     */
-
-    public Image getOldImage() {
-        return oldImage;
     }
 }
