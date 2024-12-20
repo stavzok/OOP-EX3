@@ -6,20 +6,21 @@ import java.util.HashSet;
 /**
  * The SubImgCharMatcher class calculates and manages the brightness values
  * of ASCII characters to match them to sub-image brightness values.
+ *
+ * @author inbar.el and stavzok
  */
-
 public class SubImgCharMatcher {
+
     /* Set of characters being used for matching. */
-
     private HashSet<Character> charSet;
+
     /* Map to store the raw brightness values for each character. */
-
     private HashMap<Character, Double> brightnessMap;
+
     /* Map to store the normalized brightness values for each character. */
-
     private HashMap<Character, Double> normalizedBrightnessMap;
-    /* The maximum and minimum brightness values for normalization. */
 
+    /* The maximum and minimum brightness values for normalization. */
     private double maxBrightness;
     private double minBrightness;
 
@@ -46,7 +47,6 @@ public class SubImgCharMatcher {
      * @return The calculated brightness value of the character.
      */
     private double calculateSingleCharBrightness(char c) {
-        System.out.println("Calculating single char brightness...");
         boolean[][] tempArray;
         tempArray = CharConverter.convertToBoolArray(c);
         int count = 0;
@@ -68,7 +68,6 @@ public class SubImgCharMatcher {
      */
     private void calculateBrightness() {
         for (char c : charSet) { // Iterate over the HashSet
-            System.out.println("Calculating brightness...");
             calculateSingleCharBrightness(c);
         }
     }
@@ -89,6 +88,7 @@ public class SubImgCharMatcher {
             normalizedBrightnessMap.put(key, newCharBrightness);
         }
     }
+
     /**
      * Finds the closest matching character for a given brightness value.
      * The method iterates through the normalized brightness map and determines
@@ -117,7 +117,6 @@ public class SubImgCharMatcher {
      *
      * @param c The character to be added.
      */
-
     public void addChar(char c){
         int oldSize = charSet.size();
         charSet.add(c);
@@ -133,7 +132,6 @@ public class SubImgCharMatcher {
      *
      * @param c The character to be removed.
      */
-
     public void removeChar(char c){
         charSet.remove(c);
         Double charBrightness = normalizedBrightnessMap.get(c);
@@ -149,21 +147,21 @@ public class SubImgCharMatcher {
     public void setNormalizedBrightnessMap(HashMap<Character, Double> newNormalizedBrightnessMap) {
         normalizedBrightnessMap = newNormalizedBrightnessMap;
     }
+
     /**
      * Retrieves the current set of characters.
      *
      * @return A HashSet containing the characters.
      */
-
     public HashSet<Character> getCharSet(){
         return charSet;
     }
+
     /**
      * Retrieves the raw brightness values for the characters.
      *
      * @return A HashMap containing characters and their brightness values.
      */
-
     public HashMap<Character, Double> getBrightnessMap(){return brightnessMap;}
 
     /**
@@ -171,7 +169,6 @@ public class SubImgCharMatcher {
      *
      * @return A HashMap containing characters and their normalized brightness values.
      */
-
     public HashMap<Character, Double> getNormalizedBrightnessMap(){
         return normalizedBrightnessMap;
     }

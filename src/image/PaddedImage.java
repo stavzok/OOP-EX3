@@ -6,18 +6,20 @@ import java.awt.*;
  * The PaddedImage class ensures that an image's dimensions (width and height)
  * are extended to the closest power of two. It pads the image with white pixels
  * when necessary to meet the new dimensions.
+ *
+ * @author inbar.el amd stavzok
  */
-
 public class PaddedImage{
+
     /* The padded image with dimensions extended to powers of two. */
-
     Image image;
+
     /* The original image provided as input. */
-
     Image oldImage;
-    /* A 2D array of Colors representing the padded pixel array. */
 
+    /* A 2D array of Colors representing the padded pixel array. */
     Color [] [] pixelArray;
+
     /**
      * Constructs a PaddedImage instance.
      * If the image dimensions are already powers of two, no changes are made.
@@ -25,7 +27,6 @@ public class PaddedImage{
      *
      * @param oldImage The original image to be padded.
      */
-
     public PaddedImage(Image oldImage) {
         this.oldImage = oldImage;
         int newWidth = closestPowerOfTwo(oldImage.getWidth());
@@ -49,7 +50,6 @@ public class PaddedImage{
      * @param newHeight The new height, closest power of two.
      * @return A 2D Color array representing the padded pixel array.
      */
-
     private Color[][] extendPixelArray(Image oldImage, int newWidth, int newHeight) {
         int diffWidth = (newWidth - oldImage.getWidth())/2;
         int diffHeight = (newHeight - oldImage.getHeight())/2;
@@ -73,7 +73,6 @@ public class PaddedImage{
      * @param number The input number.
      * @return The closest power of two greater than or equal to the input number.
      */
-
     private int closestPowerOfTwo(int number) {
         int power = 1;
         while (power < number) {
@@ -87,7 +86,6 @@ public class PaddedImage{
      *
      * @return The padded image with dimensions as powers of two.
      */
-
     public Image getImage() {
         return image;
     }
