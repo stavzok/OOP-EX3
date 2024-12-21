@@ -318,6 +318,50 @@ public class Shell {
         }
     }
 
+    private void handleResolutionCommand(String command, int maxResolution, int minResolution) {
+        int newRes = resolution;
+        if (!command.isEmpty()) {
+            try {
+                newRes = handleResChange(command);
+            } catch (IllegalArgumentException e) {
+                System.out.println(RES_FORMAT_ERROR);
+                return;
+            }
+        }
+
+        if (newRes > maxResolution || newRes < minResolution) {
+            System.out.println(RES_BOUNDARIES_ERROR);
+            return;
+        }
+
+        resolution = newRes;
+        System.out.println(CHANGED_RES_MESSAGE + resolution);
+    }
+
+    private void handleAsciiArtCommand(Image image) {
+        if (subImgCharMatcher.getCharSet().size() < 2) {
+            System.out.println(CHARS_TOO_SMALL);
+            return;
+        }
+
+        boolean[] mementoComparison = compareToMemento();
+        if (!mementoComparison[0]) {
+            paddedImage = new PaddedImage(image);
+            imageConverter = new ImageConverter(paddedImage, resolution);
+        }
+
+        if (!mementoComparison[1]) {
+            subImgCharMatcher.normalizeBrightness();
+        }
+
+        AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher,
+                roundMethod, imageConverter);
+        char[][] asciiImage = algo.run();
+        outputFormat.out(asciiImage);
+        memento = saveToMemento();
+        resolution = DEFAULT_RESOLUTION;
+    }
+
 
     /**
      * Runs the command-line interface for generating ASCII art.
@@ -343,21 +387,7 @@ public class Shell {
                         printCharArray();
                         break;
                     case RESOLUTION_COMMAND:
-                        int newRes = resolution;
-                        if (inputAnswer.split(" ").length > 1) {
-                            try {
-                                newRes = handleResChange(inputAnswer.split(" ")[1]);
-                            }
-                            catch (IllegalArgumentException e) {
-                                System.out.println(RES_FORMAT_ERROR);
-                            }
-                        }
-                        if (newRes > maxResolution || newRes < minResolution) {
-                            System.out.println(RES_BOUNDARIES_ERROR);
-                            return;
-                        }
-                        resolution = newRes;
-                        System.out.println(CHANGED_RES_MESSAGE + resolution);
+                        handleResolutionCommand(command, maxResolution, minResolution);
                         break;
                     case ADD_COMMAND:
                         try {
@@ -376,15 +406,15 @@ public class Shell {
                         }
                         break;
 
-                        case ROUND_METHOD_COMMAND:
-                        try {
-                            handleRound(command);
-                        }
-                        catch (IllegalArgumentException e) {
-                            System.out.println(ROUND_METHOD_ERROR);
+                    case ROUND_METHOD_COMMAND:
+                    try {
+                        handleRound(command);
+                    }
+                    catch (IllegalArgumentException e) {
+                        System.out.println(ROUND_METHOD_ERROR);
 
-                        }
-                        break;
+                    }
+                    break;
                     case OUTPUT_METHOD_COMMAND:
                         try {
                             handleOutputMethod(command);
@@ -395,25 +425,9 @@ public class Shell {
                         break;
 
                     case ASCII_ART_COMMAND:
-                        if(subImgCharMatcher.getCharSet().size() < 2) {
-                            System.out.println(CHARS_TOO_SMALL);
-                            return;
-                        }
-                        if(!compareToMemento()[0]) {
-                            paddedImage = new PaddedImage(image);
-                            imageConverter = new ImageConverter(paddedImage, resolution);
-                        }
-
-                        if(!compareToMemento()[1]) {
-                            subImgCharMatcher.normalizeBrightness();
-                        }
-
-                        AsciiArtAlgorithm algo = new AsciiArtAlgorithm(resolution, subImgCharMatcher, roundMethod, imageConverter);
-                        char[][] asciiImage = algo.run();
-                        outputFormat.out(asciiImage);
-                        memento = saveToMemento();
-                        resolution = DEFAULT_RESOLUTION;
+                        handleAsciiArtCommand(image);
                         break;
+
                     default:
                         // replace with try catch?
                         System.out.println(EXECUTION_FORMAT_ERROR);

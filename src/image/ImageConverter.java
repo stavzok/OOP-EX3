@@ -83,8 +83,6 @@ public class ImageConverter {
         int subImageCol = subImageIndex % (oldWidth / newWidth);
         for (int i=0; i<newHeight; i++) {
             for (int j=0; j<newWidth; j++) {
-                int index1 = j + subImageCol*newWidth;
-                int index2 = i + subImageRow*newHeight;
                 subImage[i][j] =  paddedImage.getImage().getPixel(
                         i + subImageRow*newHeight, j + subImageCol*newWidth);
             }
